@@ -4,32 +4,51 @@ import { useNavigate } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    console.log("Login clicked"); // debug
+
+    setLoading(true);
+
     try {
       const res = await axios.post(
-        "https://ai-fitness-backend.onrender.com/api/auth/login",
+        "https://ai-fitness-backend-2328.onrender.com/api/auth/login",
         {
           email,
           password,
         },
       );
 
+      console.log("Response:", res.data);
+
       const token = res.data.token;
+
+      if (!token) {
+        alert("Login failed: No token received");
+        return;
+      }
 
       localStorage.setItem("token", token);
 
+      alert("Login successful ✅");
+
       navigate("/dashboard");
     } catch (error) {
+      console.error("Login error:", error);
+
       if (error.response) {
-        alert(error.response.data.message);
+        alert(error.response.data.message || "Login failed");
       } else {
-        alert("Login failed");
+        alert("Server not reachable ❌");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,9 +77,10 @@ function Login() {
 
         <button
           type="submit"
+          disabled={loading}
           className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>
