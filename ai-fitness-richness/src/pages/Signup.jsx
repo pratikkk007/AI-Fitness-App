@@ -1,33 +1,44 @@
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 function Signup() {
+  const navigate = useNavigate();
+
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSignup = async (e) => {
     e.preventDefault();
 
+    setLoading(true);
+
     try {
       const res = await axios.post(
-        "https://ai-fitness-backend.onrender.com/api/auth/signup",
+        "https://ai-fitness-backend-2328.onrender.com/api/auth/signup",
         {
+          name,
           email,
           password,
         },
       );
 
-      alert(res.data.message);
+      alert("Signup successful ✅");
 
-      // reset form
-      setEmail("");
-      setPassword("");
+      // Redirect to login
+      navigate("/login");
     } catch (error) {
+      console.error(error);
+
       if (error.response) {
-        alert(error.response.data.message);
+        alert(error.response.data.message || "Signup failed ❌");
       } else {
-        alert("Signup failed");
+        alert("Server not reachable ❌");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,7 +48,16 @@ function Signup() {
         onSubmit={handleSignup}
         className="bg-white p-8 rounded shadow w-96"
       >
-        <h2 className="text-2xl font-bold mb-4 text-center">Signup</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
+
+        <input
+          type="text"
+          placeholder="Name"
+          className="w-full border p-2 mb-3 rounded"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
 
         <input
           type="email"
@@ -59,10 +79,19 @@ function Signup() {
 
         <button
           type="submit"
+          disabled={loading}
           className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
         >
-          Signup
+          {loading ? "Signing up..." : "Sign Up"}
         </button>
+
+        {/* 🔥 Login link */}
+        <p className="text-center mt-4">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-500 font-semibold">
+            Login
+          </Link>
+        </p>
       </form>
     </div>
   );
