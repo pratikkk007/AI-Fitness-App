@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
@@ -11,8 +11,6 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    console.log("Login clicked"); // debug
 
     setLoading(true);
 
@@ -25,8 +23,6 @@ function Login() {
         },
       );
 
-      console.log("Response:", res.data);
-
       const token = res.data.token;
 
       if (!token) {
@@ -34,16 +30,16 @@ function Login() {
         return;
       }
 
+      // Save token
       localStorage.setItem("token", token);
 
-      alert("Login successful ✅");
-
+      // Redirect
       navigate("/dashboard");
     } catch (error) {
-      console.error("Login error:", error);
+      console.error(error);
 
       if (error.response) {
-        alert(error.response.data.message || "Login failed");
+        alert(error.response.data.message || "Invalid credentials ❌");
       } else {
         alert("Server not reachable ❌");
       }
@@ -82,6 +78,14 @@ function Login() {
         >
           {loading ? "Logging in..." : "Login"}
         </button>
+
+        {/* 🔥 Signup Link */}
+        <p className="text-center mt-4">
+          Don’t have an account?{" "}
+          <Link to="/signup" className="text-blue-500 font-semibold">
+            Sign up
+          </Link>
+        </p>
       </form>
     </div>
   );
