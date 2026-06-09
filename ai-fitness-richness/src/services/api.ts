@@ -4,6 +4,10 @@ const API = axios.create({
   baseURL: "https://ai-fitness-backend-2328.onrender.com/api",
 });
 
+/* const API = axios.create({
+  baseURL: "http://localhost:5000/api",
+}); */
+
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
 
